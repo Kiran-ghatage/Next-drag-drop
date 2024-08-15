@@ -1,0 +1,45 @@
+$background-color_1: #61dafb;
+$background-color_2: #fff;
+$background-color_3: #f8f8f8;
+
+.drag-drop-context {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-top: 20px;
+}
+.draggable-items {
+	margin-bottom: 20px;
+}
+.draggable-item {
+	padding: 10px 20px;
+	background-color: $background-color_1;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	cursor: grab;
+}
+.drop-area {
+	width: 100%;
+	min-height: 200px;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	padding: 20px;
+	border-radius: 4px;
+	flex-wrap: wrap;
+}
+.card {
+	width: 100%;
+	padding: 10px;
+	margin: 5px;
+	background-color: $background-color_2;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.card-container {
+	background-color: $background-color_3;
+	margin: 5px;
+	width: 15%;
+	border: 1px solid #bebebe;
+}

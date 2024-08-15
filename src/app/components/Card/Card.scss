@@ -1,0 +1,60 @@
+$background-color_1: #f8f8f8;
+$background-color_2: #c6c2c2;
+$string_background-color: #9e9cf0;
+$pit_background-color: #71e364;
+
+
+.card-container {
+	// background-color: $background-color_1;
+	margin: 5px;
+	width: 15%;
+	border-radius: 10px;
+	border-radius: 10px 10px 0px 0px;
+}
+.card-header {
+	padding: 5px;
+	padding: 8px;
+	// background-color: $background-color_2;
+	cursor: pointer;
+	font-weight: bold;
+	border-radius: 10px 10px 0px 0px;
+	border-bottom: 1px solid #ddd;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	font-size: 12px
+}
+.dots {
+	font-weight: 800;
+}
+.string {
+	background-color: $string_background-color;
+}
+.pit {
+	background-color: $pit_background-color;
+}
+.card-content {
+	padding: 10px;
+	font-size: 12px;
+	height: 80px;
+}
+.card-element {
+	border-bottom: solid 1px #b3b3b3;
+	padding: 5px;
+	margin: 5px 0px;
+	font-size: 11px
+}
+.scheduler-container {
+	// background-color: $background-color_1;
+	margin: 5px;
+	border-radius: 10px;
+	border: solid 1px #b3b3b3;
+}
+.card-content-user {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+.user-text{ 
+	margin-left: 8px;
+}

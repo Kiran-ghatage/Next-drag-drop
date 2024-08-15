@@ -1,0 +1,33 @@
+@import '@fortawesome/fontawesome-free/css/all.css';
+
+.collapsible {
+  border: 1px solid #ccc;
+  margin: 10px 0;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.collapsible__button {
+  width: 100%;
+  padding: 10px;
+  background-color: #f1f1f1;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.collapsible__content {
+  max-height: 200px; /* Fixed height */
+  overflow-y: auto; /* Make inner content scrollable */
+  background-color: #fff;
+  border-top: 1px solid #ccc;
+}
+
+.collapsible__icon {
+  margin-left: 10px;
+}

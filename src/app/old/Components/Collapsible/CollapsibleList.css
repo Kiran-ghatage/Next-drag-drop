@@ -1,0 +1,34 @@
+.collapsible-list {
+    margin: 0 auto;
+    font-family: Arial, sans-serif;
+}
+
+.collapsible-item {
+
+    margin: 10px 0;
+    border-radius: 5px;
+    overflow: hidden;
+    height: 160px;
+    overflow: auto;
+}
+
+.collapsible-header {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: #f1f1f1;
+    cursor: pointer;
+    font-weight: bold;
+    border-bottom: 1px solid #ddd;
+}
+
+.collapsible-icon {
+    margin-right: 10px;
+    font-size: 20px;
+}
+
+.collapsible-content {
+    padding: 10px;
+    background-color: #fff;
+    border-top: 1px solid #ddd;
+}

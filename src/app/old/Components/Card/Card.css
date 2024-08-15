@@ -1,0 +1,30 @@
+.card-container{
+    background-color: #f8f8f8;
+    margin: 5px;
+    width: 15%;
+    border-radius: 10px;
+}
+.card-header{
+    padding: 5px;
+    padding: 8px;
+    background-color: #c6c2c2;
+    cursor: pointer;
+    font-weight: bold;
+    border-radius: 10px 10px 0px 0px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.card-content {
+    padding: 5px;
+    font-size: 14px;
+    height: 120px;
+}
+.card-element {
+    background: #FFFFFF;
+    border: solid 1px #b3b3b3;
+    padding: 5px;
+    margin: 5px 0px;
+    border-radius: 5px;
+}
