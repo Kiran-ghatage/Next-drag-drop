@@ -6,17 +6,18 @@ $background-color_1: #fff;
 	// height: 100vh;
 }
 .section {
-	
-	border: 1px solid #ccc;
-	box-sizing: border-box;
+	padding: 1px;
+	// border: 1px solid #ccc;
+	// box-sizing: border-box;
 }
 
 .section-75 {
-	width: 75%;
+	width: 72%;
 	padding: 20px;
 }
 .section-25 {
-	width: 25%;
+	width: 28%;
+	padding: 5px;
 }
 .collapsible-content {
 	padding: 10px;

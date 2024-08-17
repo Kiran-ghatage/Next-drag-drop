@@ -16,7 +16,7 @@ import Collapsible from "./Collapsible";
 import Loader from "../Common/Loader";
 import { SchedulerContext } from "../../Context/SchedulerContext/SchedulerContext";
 import { DragDropContext } from "../../Context/DragDropContext/DragDropContext";
-
+import { EMPLOYEES, ROTATION_STATES } from "../../Constants/Constants";
 function CollapsiblesParent() {
   const {
     parkingLots,
@@ -42,7 +42,34 @@ function CollapsiblesParent() {
   } = useContext(DragDropContext);
 
   const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const [filteredDealers, setFilteredDealers] = useState(dealers);
+
   const basePath = "https://localhost:44355";
+
+  const handleDealerSearchChange = (e) => {
+    const value = e.target.value.toLowerCase();
+    setSearchTerm(value);
+
+    // Filter the employees based on the search term
+    const filtered = dealers.filter((employee) => {
+      // Check if the search term is in the firstName or skills
+      let skillsMatch;
+      if (employee?.skills) {
+        skillsMatch = employee?.skills
+          .split(" ")
+          .some((skill) => skill.includes(value));
+      }
+      const firstNameMatch = employee.firstName.toLowerCase().includes(value);
+      const lastNameMatch = employee.lastName.toLowerCase().includes(value);
+
+      return skillsMatch || firstNameMatch || lastNameMatch
+    });
+    console.log("filtered---------", filtered);
+
+    setFilteredDealers(filtered);
+  };
 
   const getFloors = async () => {
     try {
@@ -136,10 +163,9 @@ function CollapsiblesParent() {
     getTables();
     getDealers();
     getFloorManagers();
-    getPitManagers()
+    getPitManagers();
   }, []);
 
-  
   const hanldeTableDropDownElementOnDragStart = (event, table) => {
     console.log("table-------##------", table);
     if (!table?.userId) {
@@ -312,11 +338,12 @@ function CollapsiblesParent() {
 
   const getDealersUi = () => (
     <>
+      {console.log("dealersData---------", dealers)}
       {loading ? (
         <Loader />
-      ) : dealers?.length > 0 ? (
-        dealers.map((table) => (
-          <Paper elevation={24} key={table.firstName}>
+      ) : searchTerm !== "" && filteredDealers?.length > 0 ? (
+        filteredDealers.map((table) => (
+          <Paper elevation={24} key={table.employeeNumber}>
             <ListItem
               component="div"
               disablePadding
@@ -334,7 +361,30 @@ function CollapsiblesParent() {
                   primary={`${table.firstName} ${table.lastName} (${table.employeeNumber})`}
                   secondary={`${table.scheduleDate}  `}
                 />
-                {/* <ListItemText primary={`${table.scheduleDate}  `} /> */}
+              </ListItemButton>
+            </ListItem>{" "}
+          </Paper>
+        ))
+      ) : dealers?.length > 0 ? (
+        dealers.map((table) => (
+          <Paper elevation={24} key={table.employeeNumber}>
+            <ListItem
+              component="div"
+              disablePadding
+              draggable
+              onDragStart={(event) =>
+                hanldeTableDropDownElementOnDragStart(event, table)
+              }
+            >
+              <ListItemButton>
+                <ListItemIcon>
+                  <PersonOutlineIcon />
+                </ListItemIcon>
+                <ListItemText
+                  sx={{ fontSize: "10px" }}
+                  primary={`${table.firstName} ${table.lastName} (${table.employeeNumber})`}
+                  secondary={`${table.scheduleDate}  `}
+                />
               </ListItemButton>
             </ListItem>{" "}
           </Paper>
@@ -369,7 +419,6 @@ function CollapsiblesParent() {
                   primary={`${table.firstName} ${table.lastName} (${table.employeeNumber})`}
                   secondary={`${table.scheduleDate}  `}
                 />
-                {/* <ListItemText primary={`${table.scheduleDate}  `} /> */}
               </ListItemButton>
             </ListItem>{" "}
           </Paper>
@@ -404,7 +453,6 @@ function CollapsiblesParent() {
                   primary={`${table.firstName} ${table.lastName} (${table.employeeNumber})`}
                   secondary={`${table.scheduleDate}  `}
                 />
-                {/* <ListItemText primary={`${table.scheduleDate}  `} /> */}
               </ListItemButton>
             </ListItem>{" "}
           </Paper>
@@ -417,7 +465,7 @@ function CollapsiblesParent() {
   return (
     <>
       <Collapsible
-        title={`All Tables`}
+        title={ROTATION_STATES}
         kay="All Tables"
         containerClass="groupr_collapsible"
       >
@@ -455,12 +503,16 @@ function CollapsiblesParent() {
       </Collapsible>
       <Divider />
       <Collapsible
-        title={`All Employees`}
+        title={EMPLOYEES}
         kay="All Employees"
         containerClass="groupr_collapsible"
       >
         <Collapsible
-          title={`Unassigned Dealers (${dealers.length})`}
+          title={
+            searchTerm !== "" && filteredDealers?.length > 0
+              ? `Unassigned Dealers (${filteredDealers.length})`
+              : `Unassigned Dealers (${dealers.length})`
+          }
           kay="Dealers"
         >
           <div style={{ display: "flex", justifyContent: "center" }}>
@@ -468,6 +520,8 @@ function CollapsiblesParent() {
               id="standard-basic"
               label="Search Here"
               variant="standard"
+              value={searchTerm}
+              onChange={handleDealerSearchChange}
               // defaultValue="Default Value"
               // helperText="Some important text"
             />
