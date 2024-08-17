@@ -1,18 +1,21 @@
 "use client";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
 import { DragDropContext } from "../../Context/DragDropContext/DragDropContext";
 import { SchedulerContext } from "../../Context/SchedulerContext/SchedulerContext";
 import { SCHEDULER_TYPES } from "../../Constants/SchedulerTypes";
+import { BASE_PATH } from "../../Constants/Constants";
 import Card from "../Card/Card1";
+import Loader from "../Common/Loader";
 
 import "./SchedulersList.scss";
+import axios from "axios";
 
 function SchedulersList({
   handleTableDropDownElementOnDrop,
   handleTableDropDownElementOnDragOver,
 }) {
-  const { strings, setStrings } = useContext(SchedulerContext);
+  const { strings, setStrings, dateTime } = useContext(SchedulerContext);
   const {
     isStringTablesCanSwipe,
     setIsStringTablesCanSwipe,
@@ -21,6 +24,25 @@ function SchedulersList({
   } = useContext(DragDropContext);
 
   const [draggingCard, setDraggingCard] = useState(null);
+  const [loading, setLoading] = useState(false);
+  // let defaultDate = "2024-05-25"
+  let defaultDate = dateTime;
+  const getStrings = async () => {
+    try {
+      setLoading(true);
+      let strings = await axios.get(
+        `${BASE_PATH}/api/StringData?selectedDateTime=${defaultDate}`
+      );
+      setStrings(strings?.data);
+      setLoading(false);
+    } catch (error) {
+      console.log("something went wrong while fetching Strings", error);
+    }
+  };
+
+  useEffect(() => {
+    // getStrings();
+  }, [dateTime]);
 
   const getHeaderClass = (type) => {
     switch (type) {
@@ -120,6 +142,10 @@ function SchedulersList({
                     />
                   </div>
                 ))}
+             {string?.stateInfo?.length < 5 && <div
+                style={{ height: "160px", width: "20%" }}
+                onDrop={(event) => handleCardOnDrop(event, null, string.id)}
+              ></div>}
             </div>
           </div>
         ))}

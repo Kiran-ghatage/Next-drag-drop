@@ -16,7 +16,7 @@ import Collapsible from "./Collapsible";
 import Loader from "../Common/Loader";
 import { SchedulerContext } from "../../Context/SchedulerContext/SchedulerContext";
 import { DragDropContext } from "../../Context/DragDropContext/DragDropContext";
-import { EMPLOYEES, ROTATION_STATES } from "../../Constants/Constants";
+import { EMPLOYEES, ROTATION_STATES, BASE_PATH } from "../../Constants/Constants";
 import { searchEmployees } from "../../Utils/utils";
 
 function CollapsiblesParent() {
@@ -54,7 +54,7 @@ function CollapsiblesParent() {
     useState(floorManagers);
   const [filteredPitManagers, setFilteredPitManagers] = useState(pitManagers);
 
-  const basePath = "https://localhost:44355";
+ 
 
   const handleDealerSearchChange = (e) => {
     const value = e.target.value.toLowerCase();
@@ -79,7 +79,7 @@ function CollapsiblesParent() {
   const getFloors = async () => {
     try {
       setLoading(true);
-      let floors = await axios.get(`${basePath}/api/State/Floors/1`);
+      let floors = await axios.get(`${BASE_PATH}/api/State/Floors/1`);
       setFloors(floors?.data);
       setLoading(false);
     } catch (error) {
@@ -90,7 +90,7 @@ function CollapsiblesParent() {
   const getPits = async () => {
     try {
       setLoading(true);
-      let pits = await axios.get(`${basePath}/api/State/Pits/1`);
+      let pits = await axios.get(`${BASE_PATH}/api/State/Pits/1`);
       setPits(pits?.data);
       setLoading(false);
     } catch (error) {
@@ -101,7 +101,7 @@ function CollapsiblesParent() {
   const getPositions = async () => {
     try {
       setLoading(true);
-      let positions = await axios.get(`${basePath}/api/State/Positions/1`);
+      let positions = await axios.get(`${BASE_PATH}/api/State/Positions/1`);
       setPositions(positions?.data);
       setLoading(false);
     } catch (error) {
@@ -112,7 +112,7 @@ function CollapsiblesParent() {
   const getTables = async () => {
     try {
       setLoading(true);
-      let tables = await axios.get(`${basePath}/api/State/Tables/1`);
+      let tables = await axios.get(`${BASE_PATH}/api/State/Tables/1`);
       setTables(tables?.data);
       setLoading(false);
     } catch (error) {
@@ -127,7 +127,7 @@ function CollapsiblesParent() {
     try {
       setLoading(true);
       let dealers = await axios.get(
-        `${basePath}/api/Employees/Dealers/1?selectedDate=${defaultDate}`
+        `${BASE_PATH}/api/Employees/Dealers/1?selectedDate=${defaultDate}`
         //year-month-date-thms.milisec
         //yyyy-mm-ddTHH:MM:00.000z
       );
@@ -142,7 +142,7 @@ function CollapsiblesParent() {
     try {
       setLoading(true);
       let floorManagers = await axios.get(
-        `${basePath}/api/Employees/FloorManagers/1?selectedDate=${defaultDate}`
+        `${BASE_PATH}/api/Employees/FloorManagers/1?selectedDate=${defaultDate}`
       );
       setFloorManagers(floorManagers?.data);
       setLoading(false);
@@ -155,7 +155,7 @@ function CollapsiblesParent() {
     try {
       setLoading(true);
       let pitManagers = await axios.get(
-        `${basePath}/api/Employees/PitManagers/1?selectedDate=${defaultDate}`
+        `${BASE_PATH}/api/Employees/PitManagers/1?selectedDate=${defaultDate}`
       );
       setPitManagers(pitManagers?.data);
       setLoading(false);
@@ -467,7 +467,7 @@ function CollapsiblesParent() {
     </>
   );
   return (
-    <>
+    <div className="collaplisble_container">
       <Collapsible
         title={ROTATION_STATES}
         kay="All Tables"
@@ -575,7 +575,7 @@ function CollapsiblesParent() {
       </Collapsible>
 
       {/* <Collapsible title="Users">{getUsersUi()}</Collapsible> */}
-    </>
+    </div>
   );
 }
 
