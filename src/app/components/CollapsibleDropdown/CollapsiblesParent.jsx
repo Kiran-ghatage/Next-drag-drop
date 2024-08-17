@@ -17,6 +17,8 @@ import Loader from "../Common/Loader";
 import { SchedulerContext } from "../../Context/SchedulerContext/SchedulerContext";
 import { DragDropContext } from "../../Context/DragDropContext/DragDropContext";
 import { EMPLOYEES, ROTATION_STATES } from "../../Constants/Constants";
+import { searchEmployees } from "../../Utils/utils";
+
 function CollapsiblesParent() {
   const {
     parkingLots,
@@ -35,6 +37,7 @@ function CollapsiblesParent() {
     setFloorManagers,
     pitManagers,
     setPitManagers,
+    dateTime
   } = useContext(SchedulerContext);
   const {
     setDraggingTable,
@@ -42,35 +45,37 @@ function CollapsiblesParent() {
   } = useContext(DragDropContext);
 
   const [loading, setLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchDealer, setSearchDealer] = useState("");
+  const [searchFloorManager, setSearchFloorManager] = useState("");
+  const [searchPitManager, setSearchPitManager] = useState("");
 
   const [filteredDealers, setFilteredDealers] = useState(dealers);
+  const [filteredFloorManagers, setFilteredFloorManagers] =
+    useState(floorManagers);
+  const [filteredPitManagers, setFilteredPitManagers] = useState(pitManagers);
 
   const basePath = "https://localhost:44355";
 
   const handleDealerSearchChange = (e) => {
     const value = e.target.value.toLowerCase();
-    setSearchTerm(value);
-
-    // Filter the employees based on the search term
-    const filtered = dealers.filter((employee) => {
-      // Check if the search term is in the firstName or skills
-      let skillsMatch;
-      if (employee?.skills) {
-        skillsMatch = employee?.skills
-          .split(" ")
-          .some((skill) => skill.includes(value));
-      }
-      const firstNameMatch = employee.firstName.toLowerCase().includes(value);
-      const lastNameMatch = employee.lastName.toLowerCase().includes(value);
-
-      return skillsMatch || firstNameMatch || lastNameMatch
-    });
-    console.log("filtered---------", filtered);
-
-    setFilteredDealers(filtered);
+    setSearchDealer(value);
+    let searchRes = searchEmployees(value, dealers);
+    if (searchRes) setFilteredDealers(searchRes);
   };
 
+  const handleFloorManagersSearchChange = (e) => {
+    const value = e.target.value.toLowerCase();
+    setSearchFloorManager(value);
+    let searchRes = searchEmployees(value, floorManagers);
+    if (searchRes) setFilteredFloorManagers(searchRes);
+  };
+
+  const handlePitManagersSearchChange = (e) => {
+    const value = e.target.value.toLowerCase();
+    setSearchPitManager(value);
+    let searchRes = searchEmployees(value, pitManagers);
+    if (searchRes) setFilteredPitManagers(searchRes);
+  };
   const getFloors = async () => {
     try {
       setLoading(true);
@@ -115,11 +120,14 @@ function CollapsiblesParent() {
     }
   };
 
+  // let defaultDate = "2024-05-25"
+  let defaultDate = dateTime
+
   const getDealers = async () => {
     try {
       setLoading(true);
       let dealers = await axios.get(
-        `${basePath}/api/Employees/Dealers/1?selectedDate=2024-05-25`
+        `${basePath}/api/Employees/Dealers/1?selectedDate=${defaultDate}`
         //year-month-date-thms.milisec
         //yyyy-mm-ddTHH:MM:00.000z
       );
@@ -134,7 +142,7 @@ function CollapsiblesParent() {
     try {
       setLoading(true);
       let floorManagers = await axios.get(
-        `${basePath}/api/Employees/FloorManagers/1?selectedDate=2024-05-25`
+        `${basePath}/api/Employees/FloorManagers/1?selectedDate=${defaultDate}`
       );
       setFloorManagers(floorManagers?.data);
       setLoading(false);
@@ -147,7 +155,7 @@ function CollapsiblesParent() {
     try {
       setLoading(true);
       let pitManagers = await axios.get(
-        `${basePath}/api/Employees/PitManagers/1?selectedDate=2024-05-25`
+        `${basePath}/api/Employees/PitManagers/1?selectedDate=${defaultDate}`
       );
       setPitManagers(pitManagers?.data);
       setLoading(false);
@@ -164,7 +172,7 @@ function CollapsiblesParent() {
     getDealers();
     getFloorManagers();
     getPitManagers();
-  }, []);
+  }, [dateTime]);
 
   const hanldeTableDropDownElementOnDragStart = (event, table) => {
     console.log("table-------##------", table);
@@ -188,13 +196,36 @@ function CollapsiblesParent() {
       </Typography>
     </Paper>
   );
+
+  const tableContentView = (table) => (
+    <ListItemButton>
+      <ListItemIcon>
+        <CalendarViewMonthIcon />
+      </ListItemIcon>
+      <ListItemText primary={table?.name} />
+    </ListItemButton>
+  );
+
+  const employeesContentView = (employee) => (
+    <ListItemButton>
+      <ListItemIcon>
+        <PersonOutlineIcon />
+      </ListItemIcon>
+      <ListItemText
+        sx={{ fontSize: "10px" }}
+        primary={`${employee.firstName} ${employee.lastName} (${employee.employeeNumber})`}
+        secondary={`${employee.scheduleDate}  `}
+      />
+    </ListItemButton>
+  );
+
   const getParkingLotsUi = () => (
     <>
       {loading ? (
         <Loader />
       ) : parkingLots?.length > 0 ? (
-        parkingLots.map((table) => (
-          <Paper elevation={24} key={table.name}>
+        parkingLots.map((table, tableIndex) => (
+          <Paper elevation={24} key={`${table.name - tableIndex}`}>
             <ListItem
               component="div"
               disablePadding
@@ -203,12 +234,7 @@ function CollapsiblesParent() {
                 hanldeTableDropDownElementOnDragStart(event, table)
               }
             >
-              <ListItemButton>
-                <ListItemIcon>
-                  <CalendarViewMonthIcon />
-                </ListItemIcon>
-                <ListItemText primary={table.name} />
-              </ListItemButton>
+              {tableContentView(table)}
             </ListItem>
           </Paper>
         ))
@@ -223,8 +249,8 @@ function CollapsiblesParent() {
       {loading ? (
         <Loader />
       ) : floors?.length > 0 ? (
-        floors.map((table) => (
-          <Paper elevation={24} key={table.name}>
+        floors.map((table, tableIndex) => (
+          <Paper elevation={24} key={`${table.name - tableIndex}`}>
             <ListItem
               component="div"
               disablePadding
@@ -233,12 +259,7 @@ function CollapsiblesParent() {
                 handleFloorTableDraggedFromDropDoanListOnDragStart(event, table)
               }
             >
-              <ListItemButton>
-                <ListItemIcon>
-                  <CalendarViewMonthIcon />
-                </ListItemIcon>
-                <ListItemText primary={table.name} />
-              </ListItemButton>
+              {tableContentView(table)}
             </ListItem>
           </Paper>
         ))
@@ -253,8 +274,8 @@ function CollapsiblesParent() {
       {loading ? (
         <Loader />
       ) : pits?.length > 0 ? (
-        pits.map((table) => (
-          <Paper elevation={24} key={table.name}>
+        pits.map((table, tableIndex) => (
+          <Paper elevation={24} key={`${table.name - tableIndex}`}>
             <ListItem
               component="div"
               disablePadding
@@ -263,12 +284,7 @@ function CollapsiblesParent() {
                 hanldeTableDropDownElementOnDragStart(event, table)
               }
             >
-              <ListItemButton>
-                <ListItemIcon>
-                  <CalendarViewMonthIcon />
-                </ListItemIcon>
-                <ListItemText primary={table.name} />
-              </ListItemButton>
+              {tableContentView(table)}
             </ListItem>{" "}
           </Paper>
         ))
@@ -284,8 +300,8 @@ function CollapsiblesParent() {
         <Loader />
       ) : (
         positions?.length > 0 &&
-        positions.map((table) => (
-          <Paper elevation={24} key={table.name}>
+        positions.map((table, tableIndex) => (
+          <Paper elevation={24} key={`${table.name - tableIndex}`}>
             <ListItem
               component="div"
               disablePadding
@@ -294,12 +310,7 @@ function CollapsiblesParent() {
                 hanldeTableDropDownElementOnDragStart(event, table)
               }
             >
-              <ListItemButton>
-                <ListItemIcon>
-                  <CalendarViewMonthIcon />
-                </ListItemIcon>
-                <ListItemText primary={table.name} />
-              </ListItemButton>
+              {tableContentView(table)}
             </ListItem>{" "}
           </Paper>
         ))
@@ -313,8 +324,8 @@ function CollapsiblesParent() {
         <Loader />
       ) : (
         tables?.length > 0 &&
-        tables.map((table) => (
-          <Paper elevation={24} key={table.name}>
+        tables.map((table, tableIndex) => (
+          <Paper elevation={24} key={`${table.name - tableIndex}`}>
             <ListItem
               component="div"
               disablePadding
@@ -323,12 +334,7 @@ function CollapsiblesParent() {
                 hanldeTableDropDownElementOnDragStart(event, table)
               }
             >
-              <ListItemButton>
-                <ListItemIcon>
-                  <CalendarViewMonthIcon />
-                </ListItemIcon>
-                <ListItemText primary={table.name} />
-              </ListItemButton>
+              {tableContentView(table)}
             </ListItem>
           </Paper>
         ))
@@ -338,11 +344,10 @@ function CollapsiblesParent() {
 
   const getDealersUi = () => (
     <>
-      {console.log("dealersData---------", dealers)}
       {loading ? (
         <Loader />
-      ) : searchTerm !== "" && filteredDealers?.length > 0 ? (
-        filteredDealers.map((table) => (
+      ) : searchDealer !== "" && filteredDealers?.length > 0 ? (
+        filteredDealers.map((table, tableIndex) => (
           <Paper elevation={24} key={table.employeeNumber}>
             <ListItem
               component="div"
@@ -352,21 +357,12 @@ function CollapsiblesParent() {
                 hanldeTableDropDownElementOnDragStart(event, table)
               }
             >
-              <ListItemButton>
-                <ListItemIcon>
-                  <PersonOutlineIcon />
-                </ListItemIcon>
-                <ListItemText
-                  sx={{ fontSize: "10px" }}
-                  primary={`${table.firstName} ${table.lastName} (${table.employeeNumber})`}
-                  secondary={`${table.scheduleDate}  `}
-                />
-              </ListItemButton>
+              {employeesContentView(table)}
             </ListItem>{" "}
           </Paper>
         ))
       ) : dealers?.length > 0 ? (
-        dealers.map((table) => (
+        dealers.map((table, tableIndex) => (
           <Paper elevation={24} key={table.employeeNumber}>
             <ListItem
               component="div"
@@ -376,17 +372,8 @@ function CollapsiblesParent() {
                 hanldeTableDropDownElementOnDragStart(event, table)
               }
             >
-              <ListItemButton>
-                <ListItemIcon>
-                  <PersonOutlineIcon />
-                </ListItemIcon>
-                <ListItemText
-                  sx={{ fontSize: "10px" }}
-                  primary={`${table.firstName} ${table.lastName} (${table.employeeNumber})`}
-                  secondary={`${table.scheduleDate}  `}
-                />
-              </ListItemButton>
-            </ListItem>{" "}
+              {employeesContentView(table)}
+            </ListItem>
           </Paper>
         ))
       ) : (
@@ -397,10 +384,30 @@ function CollapsiblesParent() {
 
   const getFloorManagersUi = () => (
     <>
+      {/* {console.log(
+        " searchFloorManager filteredFloorManagers?.length > 0---",
+        searchFloorManager
+      )}
+      {console.log("v------", filteredFloorManagers)} */}
       {loading ? (
         <Loader />
+      ) : searchFloorManager !== "" && filteredFloorManagers?.length > 0 ? (
+        filteredFloorManagers.map((table, tableIndex) => (
+          <Paper elevation={24} key={table.employeeNumber}>
+            <ListItem
+              component="div"
+              disablePadding
+              draggable
+              onDragStart={(event) =>
+                hanldeTableDropDownElementOnDragStart(event, table)
+              }
+            >
+              {employeesContentView(table)}
+            </ListItem>{" "}
+          </Paper>
+        ))
       ) : floorManagers?.length > 0 ? (
-        floorManagers.map((table) => (
+        floorManagers.map((table, tableIndex) => (
           <Paper elevation={24} key={table.firstName}>
             <ListItem
               component="div"
@@ -410,16 +417,7 @@ function CollapsiblesParent() {
                 hanldeTableDropDownElementOnDragStart(event, table)
               }
             >
-              <ListItemButton>
-                <ListItemIcon>
-                  <PersonOutlineIcon />
-                </ListItemIcon>
-                <ListItemText
-                  sx={{ fontSize: "10px" }}
-                  primary={`${table.firstName} ${table.lastName} (${table.employeeNumber})`}
-                  secondary={`${table.scheduleDate}  `}
-                />
-              </ListItemButton>
+              {employeesContentView(table)}
             </ListItem>{" "}
           </Paper>
         ))
@@ -433,8 +431,23 @@ function CollapsiblesParent() {
     <>
       {loading ? (
         <Loader />
+      ) : searchPitManager !== "" && filteredPitManagers?.length > 0 ? (
+        filteredPitManagers.map((table, tableIndex) => (
+          <Paper elevation={24} key={table.employeeNumber}>
+            <ListItem
+              component="div"
+              disablePadding
+              draggable
+              onDragStart={(event) =>
+                hanldeTableDropDownElementOnDragStart(event, table)
+              }
+            >
+              {employeesContentView(table)}
+            </ListItem>{" "}
+          </Paper>
+        ))
       ) : pitManagers?.length > 0 ? (
-        pitManagers.map((table) => (
+        pitManagers.map((table, tableIndex) => (
           <Paper elevation={24} key={table.firstName}>
             <ListItem
               component="div"
@@ -444,16 +457,7 @@ function CollapsiblesParent() {
                 hanldeTableDropDownElementOnDragStart(event, table)
               }
             >
-              <ListItemButton>
-                <ListItemIcon>
-                  <PersonOutlineIcon />
-                </ListItemIcon>
-                <ListItemText
-                  sx={{ fontSize: "10px" }}
-                  primary={`${table.firstName} ${table.lastName} (${table.employeeNumber})`}
-                  secondary={`${table.scheduleDate}  `}
-                />
-              </ListItemButton>
+              {employeesContentView(table)}
             </ListItem>{" "}
           </Paper>
         ))
@@ -509,7 +513,7 @@ function CollapsiblesParent() {
       >
         <Collapsible
           title={
-            searchTerm !== "" && filteredDealers?.length > 0
+            searchDealer !== "" && filteredDealers?.length > 0
               ? `Unassigned Dealers (${filteredDealers.length})`
               : `Unassigned Dealers (${dealers.length})`
           }
@@ -520,7 +524,7 @@ function CollapsiblesParent() {
               id="standard-basic"
               label="Search Here"
               variant="standard"
-              value={searchTerm}
+              value={searchDealer}
               onChange={handleDealerSearchChange}
               // defaultValue="Default Value"
               // helperText="Some important text"
@@ -530,7 +534,11 @@ function CollapsiblesParent() {
         </Collapsible>
 
         <Collapsible
-          title={`Unassigned Floor Managers (${floorManagers.length})`}
+          title={
+            searchFloorManager !== "" && filteredFloorManagers?.length > 0
+              ? `Unassigned Dealers (${filteredFloorManagers.length})`
+              : `Unassigned Floor Managers (${floorManagers.length})`
+          }
           kay="Floor Managers"
         >
           <div style={{ display: "flex", justifyContent: "center" }}>
@@ -538,15 +546,19 @@ function CollapsiblesParent() {
               id="standard-basic"
               label="Search Here"
               variant="standard"
-              // defaultValue="Default Value"
-              // helperText="Some important text"
+              value={searchFloorManager}
+              onChange={handleFloorManagersSearchChange}
             />
           </div>
           {getFloorManagersUi()}
         </Collapsible>
 
         <Collapsible
-          title={`Unassigned Pit Managers (${pitManagers.length})`}
+          title={
+            searchPitManager !== "" && filteredPitManagers?.length > 0
+              ? `Unassigned Dealers (${filteredPitManagers.length})`
+              : `Unassigned Pit Managers (${pitManagers.length})`
+          }
           kay="Pit Managers"
         >
           <div style={{ display: "flex", justifyContent: "center" }}>
@@ -554,8 +566,8 @@ function CollapsiblesParent() {
               id="standard-basic"
               label="Search Here"
               variant="standard"
-              // defaultValue="Default Value"
-              // helperText="Some important text"
+              value={searchPitManager}
+              onChange={handlePitManagersSearchChange}
             />
           </div>
           {getPitManagersUi()}

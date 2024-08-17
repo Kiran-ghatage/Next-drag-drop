@@ -1,12 +1,14 @@
 "use client";
 import React, { createContext, useState } from "react";
+import dayjs from "dayjs";
 import { stringData, usersData, tablesData } from "../../MockData/Data";
-import { defaultTable } from "../../Constants/Constants";
+import { DATE_TIME_FORMAT, DATE_FORMAT } from "../../Constants/Constants";
+
 export const SchedulerContext = createContext();
 
 export const SchedulerProvider = ({ children }) => {
   const [strings, setStrings] = useState(stringData);
-  const [dateTime, setDataTime] = useState();
+  const [dateTime, setDataTime] = useState(dayjs().format(DATE_FORMAT));
   const [users, setUsers] = useState(usersData);
   const [parkingLots, setParkingLots] = useState([]);
   const [floors, setFloors] = useState([]);
