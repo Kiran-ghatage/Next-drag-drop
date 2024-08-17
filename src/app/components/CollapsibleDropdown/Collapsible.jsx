@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
-import './Collapsible.scss';
+import React, { useState } from "react";
+import Paper from "@mui/material/Paper";
 
-const Collapsible = ({ title, children }) => {
+import "./Collapsible.scss";
+
+const Collapsible = ({ containerClass, title, children }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleCollapsible = () => {
@@ -9,19 +11,21 @@ const Collapsible = ({ title, children }) => {
   };
 
   return (
-    <div className="collapsible">
-      <button onClick={toggleCollapsible} className="collapsible__button">
-        {title}
-        <span className="collapsible__icon">
-          {isOpen ? (
-            <i className="fas fa-chevron-up"></i>
-          ) : (
-            <i className="fas fa-chevron-down"></i>
-          )}
-        </span>
-      </button>
-      {isOpen && <div className="collapsible__content">{children}</div>}
-    </div>
+    <Paper elevation={2}>
+      <div className={containerClass ? containerClass : "collapsible"}>
+        <button onClick={toggleCollapsible} className="collapsible__button">
+          {title}
+          <span className="collapsible__icon">
+            {isOpen ? (
+              <i className="fas fa-chevron-up"></i>
+            ) : (
+              <i className="fas fa-chevron-down"></i>
+            )}
+          </span>
+        </button>
+        {isOpen && <div className="collapsible__content">{children}</div>}
+      </div>
+    </Paper>
   );
 };
 

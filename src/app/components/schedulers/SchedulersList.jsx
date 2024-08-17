@@ -13,6 +13,12 @@ function SchedulersList({
   handleTableDropDownElementOnDragOver,
 }) {
   const { strings, setStrings } = useContext(SchedulerContext);
+  const {
+    isStringTablesCanSwipe,
+    setIsStringTablesCanSwipe,
+    draggingFloorTable,
+    setDraggingFloorTable,
+  } = useContext(DragDropContext);
 
   const [draggingCard, setDraggingCard] = useState(null);
 
@@ -28,7 +34,7 @@ function SchedulersList({
   };
 
   const onCardDragStart = (event, card) => {
-    if (card) {
+    if (card && isStringTablesCanSwipe) {
       console.log("card----------##---", card);
       setDraggingCard(card);
       event.dataTransfer.effectAllowed = "move";
@@ -36,27 +42,53 @@ function SchedulersList({
   };
 
   //Cars swiping and adding users to card
-  const handleCardOnDrop = (event, index) => {
-    console.log("dropper something-----------", index, draggingCard);
+  const handleCardOnDrop = (event, index, stringId) => {
+    console.log("handleCardOnDrop--called-----");
+
     event.preventDefault();
 
-    const filteredString = strings.filter(
-      (card) =>
-        card.id === draggingCard.stringId &&
-        card?.stateInfo?.id !== draggingCard.id
-    );
-    console.log("filteredString-----------", filteredString);
+    if (isStringTablesCanSwipe) {
+      // for existing Cars swiping with in string
+      const filteredString = strings.filter(
+        (card) =>
+          card.id === draggingCard.stringId &&
+          card?.stateInfo?.id !== draggingCard.id
+      );
+      const newCards = filteredString[0]?.stateInfo?.filter(
+        (state) => state?.id !== draggingCard.id
+      );
 
-    const newCards = filteredString[0]?.stateInfo?.filter(
-      (state) => state?.id !== draggingCard.id
-    );
+      newCards.splice(index, 0, draggingCard);
+      filteredString[0].stateInfo = newCards;
+      setStrings((prev) => {
+        return [...prev, filteredString];
+      });
+    } else {
+      setIsStringTablesCanSwipe(true);
+      const filteredString = strings.filter((string) => string.id === stringId);
+      console.log("draggingFloorTable---------------", draggingFloorTable);
+      console.log("filteredString---------------", filteredString);
 
-    console.log("newCards-----------", newCards);
-    newCards.splice(index, 0, draggingCard);
-    filteredString[0].stateInfo = newCards;
-    setStrings((prev) => {
-      return [...prev, filteredString];
-    });
+      if (filteredString?.length > 0) {
+        const newTable = {
+          id: filteredString[0]?.stringLength + 1,
+          stringId: stringId,
+          sequenceId: filteredString[0]?.stringLength + 1,
+          name: draggingFloorTable.name,
+          stateType: 0,
+          startDate: "2024-06-25T14:07:51.327",
+          endDate: null,
+          userInfo: null,
+          lastRecordUpdated: "0001-01-01T00:00:00",
+        };
+
+        let tables = filteredString[0].stateInfo;
+        tables.push(newTable);
+        setStrings((prev) => {
+          return [...prev, filteredString];
+        });
+      }
+    }
     // setDraggingCard(null);
   };
   return (
@@ -72,12 +104,17 @@ function SchedulersList({
             <div key={string.id} className="scheduler_cards">
               {string?.stateInfo?.length > 0 &&
                 string.stateInfo.map((state, stateIndex) => (
-                  <div onDrop={(event) => handleCardOnDrop(event, stateIndex)}>
+                  <div
+                    className="scheduler_cards_width"
+                    key={stateIndex}
+                    onDrop={(event) =>
+                      handleCardOnDrop(event, stateIndex, string.id)
+                    }
+                  >
                     <Card
-                      key={state.id}
                       card={state}
                       onCardDragStart={onCardDragStart}
-                      draggable={true}
+                      draggable={isStringTablesCanSwipe}
                       onCardElementDragStart={() => {}}
                       headerClass={getHeaderClass(string.name)}
                     />

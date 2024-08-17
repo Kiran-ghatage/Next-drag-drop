@@ -10,12 +10,9 @@ export const DateTime = () => {
       clearInterval(timer);
     };
   });
-
+  {/* <p> Date : {date.toLocaleDateString()}</p> */ }
   return (
-    <>
-      <p>{date.toLocaleTimeString()}</p>
-      {/* <p> Date : {date.toLocaleDateString()}</p> */}
-    </>
+    <div>{date.toLocaleTimeString()}</div>
   );
 };
 

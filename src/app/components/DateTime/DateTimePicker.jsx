@@ -19,14 +19,14 @@ export default function ReferenceDateExplicitDateTimePicker() {
         spacing={2}
         sx={{ minWidth: 305, svg: { color: "#fff" }, input: { color: "#fff" } }}
       >
-        <Typography>
+        {/* <Typography> */}
           <DateTimePicker
             value={dateTime}
             onChange={setDataTime}
             referenceDate={dayjs("2022-04-17T15:30")}
           />
           {/* Stored value: {dateTime == null ? "null" : dateTime.format()} */}
-        </Typography>
+        {/* </Typography> */}
       </Stack>
     </LocalizationProvider>
   );

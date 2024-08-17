@@ -1,15 +1,10 @@
 "use client";
 import { useContext, useState } from "react";
 
-import Box from "@mui/material/Box";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemText from "@mui/material/ListItemText";
-
 import "./Layout.scss";
 import DragDrop from "../DragDrop/DragDropTablePlayground";
 import SchedulersList from "../schedulers/SchedulersList";
-import Collapsible from "../CollapsibleDropdown/Collapsible";
+import CollapsiblesParent from "../CollapsibleDropdown/CollapsiblesParent";
 import { DragDropContext } from "../../Context/DragDropContext/DragDropContext";
 
 const Layout = () => {
@@ -38,69 +33,34 @@ const Layout = () => {
     setTables,
   } = useContext(DragDropContext);
 
-  const hanldeTableDropDownElementOnDragStart = (event, table) => {
-    console.log("table-------##------", table);
-    if (!table?.userId) {
-      setDraggingTable(table);
-      event.dataTransfer.setData("table", table);
-    } else {
-      setDraggingTable(null);
-    }
-  };
-
   const objectExists = (array, newItem) => {
     return array.some(
       (item) => item?.name === newItem?.name && item?.skills === newItem?.skills
     );
   };
+
+  const handleFloorTableDraggedFromDropDoanListOnDrop = () => {
+
+  }
   const handleTableDropDownElementOnDrop = (event) => {
-    if (!objectExists(stringTables, draggingTable) && draggingTable) {
-      const newId =
-        stringTables.length > 0
-          ? Math.max(...stringTables.map((item) => item.id)) + 1
-          : 1;
-      setStringTables([...stringTables, { ...draggingTable, id: newId }]);
-      const updatedStrings = tables?.filter(
-        (table) => table.name !== draggingTable.name
-      );
-      setTables(updatedStrings);
-    } else {
-      console.log("Table already exists");
-    }
+    // if (!objectExists(stringTables, draggingTable) && draggingTable) {
+    //   const newId =
+    //     stringTables.length > 0
+    //       ? Math.max(...stringTables.map((item) => item.id)) + 1
+    //       : 1;
+    //   setStringTables([...stringTables, { ...draggingTable, id: newId }]);
+    //   const updatedStrings = tables?.filter(
+    //     (table) => table.name !== draggingTable.name
+    //   );
+    //   setTables(updatedStrings);
+    // } else {
+    //   console.log("Table already exists");
+    // }
   };
 
   const handleTableDropDownElementOnDragOver = (event) => {
     event.preventDefault();
   };
-  const getTablesUi = () => (
-    <>
-      {tables.map((table) => (
-        <ListItem
-          key={table.id}
-          component="div"
-          disablePadding
-          draggable
-          onDragStart={(event) =>
-            hanldeTableDropDownElementOnDragStart(event, table)
-          }
-        >
-          <ListItemButton>
-            <ListItemText primary={table.name} />
-          </ListItemButton>
-        </ListItem>
-        // <div
-        //   key={table.id}
-        //   draggable
-        //   onDragStart={(event) =>
-        //     hanldeTableDropDownElementOnDragStart(event, table)
-        //   }
-        //   className="collapsible-content"
-        // >
-        //   {table.name}
-        // </div>
-      ))}
-    </>
-  );
 
   //Cards Start
   const handleUserDropDownElementOnDragStart = (event, element) => {
@@ -160,9 +120,11 @@ const Layout = () => {
   return (
     <div className="container">
       <div className="section section-75">
-        <SchedulersList 
-            handleTableDropDownElementOnDrop={handleTableDropDownElementOnDrop}
-            handleTableDropDownElementOnDragOver={handleTableDropDownElementOnDragOver}
+        <SchedulersList
+          handleTableDropDownElementOnDrop={handleTableDropDownElementOnDrop}
+          handleTableDropDownElementOnDragOver={
+            handleTableDropDownElementOnDragOver
+          }
         />
         {/* <DragDrop
           cards={stringTables}
@@ -174,8 +136,7 @@ const Layout = () => {
         /> */}
       </div>
       <div className="section section-25">
-        <Collapsible title="Tables">{getTablesUi()}</Collapsible>
-        <Collapsible title="Users">{getUsersUi()}</Collapsible>
+        <CollapsiblesParent />
       </div>
     </div>
   );

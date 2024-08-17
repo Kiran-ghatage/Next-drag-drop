@@ -8,7 +8,6 @@ $pit_background-color: #71e364;
 	// background-color: $background-color_1;
 	margin: 5px;
 	width: 15%;
-	border-radius: 10px;
 	border-radius: 10px 10px 0px 0px;
 }
 .card-header {
@@ -18,7 +17,6 @@ $pit_background-color: #71e364;
 	cursor: pointer;
 	font-weight: bold;
 	border-radius: 10px 10px 0px 0px;
-	border-bottom: 1px solid #ddd;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -45,10 +43,8 @@ $pit_background-color: #71e364;
 	font-size: 11px
 }
 .scheduler-container {
-	// background-color: $background-color_1;
 	margin: 5px;
 	border-radius: 10px;
-	border: solid 1px #b3b3b3;
 }
 .card-content-user {
 	display: flex;

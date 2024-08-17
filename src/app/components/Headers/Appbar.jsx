@@ -75,9 +75,9 @@ export default function SearchAppBar() {
             sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
           >
             Manage Rotation
-            <Typography>
+            {/* <Typography>
               <DateTime />
-            </Typography>
+            </Typography> */}
           </Typography>
           <DateTimePicker />
           <Search>

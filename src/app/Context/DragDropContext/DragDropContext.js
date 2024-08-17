@@ -1,58 +1,69 @@
-"use client"
-import React, { createContext, useState } from "react";
+"use client";
+import React, { createContext, useState, useContext } from "react";
 import { stringData, usersData, tablesData } from "../../MockData/Data";
 import { defaultTable } from "../../Constants/Constants";
 export const DragDropContext = createContext();
 
+import { SchedulerContext } from "../SchedulerContext/SchedulerContext";
+
 export const DrapDropProvider = ({ children }) => {
-  const [strings, setStrings] = useState(stringData);
-  const [users, setUsers] = useState(usersData);
-  const [tables, setTables] = useState(tablesData);
-
-  const [stringTables, setStringTables] = useState([]);
+  const { strings, setStrings } = useContext(SchedulerContext);
   const [draggingTable, setDraggingTable] = useState(null);
-  const [flooreTable, setFlooreTable] = useState(defaultTable);
-  const [draggingTableUser, setDraggingTableUser] = useState();
-  const [stringTableUsers, setStringTableUsers] = useState([]);
+  const [isStringTablesCanSwipe, setIsStringTablesCanSwipe] = useState(true);
+  const [draggingFloorTable, setDraggingFloorTable] = useState(null);
 
-  const [elementDroppedOnIndexOfCard, setElementDroppedOnIndexOfCard] =
-    useState(null);
-  const [draggingUserFromDropDownList, setDraggingUserFromDropDownList] =
-    useState();
-  const [draggingUserFromCardList, setDraggingUserFromCardList] = useState();
+  const handleFloorTableDraggedFromDropDoanListOnDragStart = (event, table) => {
+    console.log(
+      "table-------##--handleFloorTableDraggedFromDropDoanListOnDragStart----",
+      table
+    );
+
+    setIsStringTablesCanSwipe(false);
+    if (!table?.userId) {
+      setDraggingFloorTable(table);
+      event.dataTransfer.setData("table", table);
+    } else {
+      setDraggingFloorTable(null);
+    }
+  };
+
+  const handleFloorTableDraggedFromDropDoanListOnDrop = () => {};
+  const handleTableDropDownElementOnDrop = (event) => {
+    if (!objectExists(stringTables, draggingTable) && draggingTable) {
+      const newId =
+        stringTables.length > 0
+          ? Math.max(...stringTables.map((item) => item.id)) + 1
+          : 1;
+      setStringTables([...stringTables, { ...draggingTable, id: newId }]);
+      const updatedStrings = tables?.filter(
+        (table) => table.name !== draggingTable.name
+      );
+      setTables(updatedStrings);
+    } else {
+      console.log("Table already exists");
+    }
+  };
 
   const handleRemoveTable = (card) => {
     const updatedTables = stringTables?.filter((table) => table.id !== card.id);
     setStringTables(updatedTables);
-    const updatedStrings = [card, ...tables]
-    setTables(updatedStrings)
+    const updatedStrings = [card, ...tables];
+    setTables(updatedStrings);
   };
 
   return (
     <DragDropContext.Provider
       value={{
-        strings,
-        setStrings,
-        users,
-        tables,
-        setTables,
-        stringTables,
-        setStringTables,
         draggingTable,
         setDraggingTable,
-        flooreTable,
-        setFlooreTable,
-        draggingTableUser,
-        setDraggingTableUser,
-        stringTableUsers,
-        setStringTableUsers,
-        elementDroppedOnIndexOfCard,
-        setElementDroppedOnIndexOfCard,
-        draggingUserFromDropDownList,
-        setDraggingUserFromDropDownList,
-        draggingUserFromCardList,
-        setDraggingUserFromCardList,
+        isStringTablesCanSwipe,
+        setIsStringTablesCanSwipe,
         handleRemoveTable,
+
+        handleFloorTableDraggedFromDropDoanListOnDragStart,
+
+        draggingFloorTable,
+        setDraggingFloorTable,
       }}
     >
       {children}
