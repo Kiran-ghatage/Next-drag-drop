@@ -41,17 +41,32 @@ function SchedulersList({
   };
 
   useEffect(() => {
-    // getStrings();
+    getStrings();
   }, [dateTime]);
 
-  const getHeaderClass = (type) => {
+  // const getHeaderClass = (type) => {
+  //   switch (type) {
+  //     case SCHEDULER_TYPES.STRING:
+  //       return "string";
+  //     case SCHEDULER_TYPES.PIT:
+  //       return "pit";
+  //     default:
+  //       return "pit";
+  //   }
+  // };
+
+  const getHeaderClass = (type) => {    
     switch (type) {
-      case SCHEDULER_TYPES.STRING:
+      case 1:
         return "string";
-      case SCHEDULER_TYPES.PIT:
+      case 2:
         return "pit";
+      case 3:
+        return "floor";
+      case 4:
+        return "posion";
       default:
-        break;
+        return "pit";
     }
   };
 
@@ -122,7 +137,7 @@ function SchedulersList({
       {strings?.length > 0 &&
         strings.map((string, stringIndex) => (
           <div key={stringIndex}>
-            <Typography>{string?.name?.toUpperCase()}</Typography>
+            {/* <Typography>{string?.name?.toUpperCase()}</Typography> */}
             <div key={string.id} className="scheduler_cards">
               {string?.stateInfo?.length > 0 &&
                 string.stateInfo.map((state, stateIndex) => (
@@ -138,14 +153,16 @@ function SchedulersList({
                       onCardDragStart={onCardDragStart}
                       draggable={isStringTablesCanSwipe}
                       onCardElementDragStart={() => {}}
-                      headerClass={getHeaderClass(string.name)}
+                      headerClass={getHeaderClass(string.id)}
                     />
                   </div>
                 ))}
-             {string?.stateInfo?.length < 5 && <div
-                style={{ height: "160px", width: "20%" }}
-                onDrop={(event) => handleCardOnDrop(event, null, string.id)}
-              ></div>}
+              {/* {string?.stateInfo?.length < 4 && (
+                <div
+                  style={{ height: "140px", width: "20%" }}
+                  onDrop={(event) => handleCardOnDrop(event, null, string.id)}
+                ></div>
+              )} */}
             </div>
           </div>
         ))}

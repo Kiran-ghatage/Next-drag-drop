@@ -1,8 +1,9 @@
 .scheduler_cards {
     display: flex;
     align-items: center;
-    padding: 10px;
-    margin: 5px;
+   
+    margin: 3px;
+    flex-wrap: wrap;
 }
 
 .scheduler_cards_width {
@@ -13,4 +14,5 @@
     background: #fff;
     border-radius: 10px;
     padding: 20px;
+    height: 100%;
 }

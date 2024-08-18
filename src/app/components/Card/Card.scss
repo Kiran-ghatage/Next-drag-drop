@@ -1,9 +1,9 @@
 $background-color_1: #f8f8f8;
 $background-color_2: #c6c2c2;
-$string_background-color: #9e9cf0;
+$string_background-color: #549ccc;
 $pit_background-color: #71e364;
-
-
+$floor_background-color: #b7d83e;
+$position_background-color: #ec7551;
 .card-container {
 	// background-color: $background-color_1;
 	margin: 5px;
@@ -31,10 +31,16 @@ $pit_background-color: #71e364;
 .pit {
 	background-color: $pit_background-color;
 }
+.floor {
+	background-color: $floor_background-color;
+}
+.posion {
+	background-color: $position_background-color;
+}
 .card-content {
 	padding: 10px;
 	font-size: 12px;
-	height: 80px;
+	height: 60px;
 }
 .card-element {
 	border-bottom: solid 1px #b3b3b3;

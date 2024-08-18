@@ -37,7 +37,7 @@ const Card = ({
               </Avatar>
               <p className="user-text">
                 {" "}
-                {`${card?.userInfo.firstName} ${card?.userInfo.lastName} (${card?.userInfo.employeeNumber})`}{" "}
+                {`${card?.userInfo.name || card?.userInfo?.firstName} (${card?.userInfo.employeeNumber})`}{" "}
               </p>
             </div>
           )}
