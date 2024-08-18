@@ -4,7 +4,7 @@ import Paper from "@mui/material/Paper";
 import Avatar from "@mui/material/Avatar";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import { DragDropContext } from "../../Context/DragDropContext/DragDropContext";
-
+import Menu from '../Common/Menu'
 import "./Card.scss";
 const Card = ({
   card,
@@ -24,7 +24,7 @@ const Card = ({
       <Paper elevation={3} className="scheduler-container">
         <header className={`card-header ${headerClass}`}>
           {card?.name}{" "}
-          {draggable && card?.sequenceId !== 0 && <p className={`dots`}>...</p>}
+          {draggable && card?.sequenceId !== 0 && <Menu card={card}/>}
         </header>
         <article className="card-content">
           {card?.userInfo && (

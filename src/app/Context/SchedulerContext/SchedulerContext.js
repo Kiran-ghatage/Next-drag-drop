@@ -1,6 +1,7 @@
 "use client";
 import React, { createContext, useState } from "react";
 import dayjs from "dayjs";
+import _ from "lodash";
 import { stringData, usersData, tablesData } from "../../MockData/Data";
 import { DATE_TIME_FORMAT, DATE_FORMAT } from "../../Constants/Constants";
 import { filterTables } from "../../Utils/utils";
@@ -8,7 +9,9 @@ import { filterTables } from "../../Utils/utils";
 export const SchedulerContext = createContext();
 
 export const SchedulerProvider = ({ children }) => {
-  const [strings, setStrings] = useState(stringData);
+  // const [strings, setStrings] = useState(stringData);
+  const [strings, setStrings] = useState([]);
+
   const [dateTime, setDataTime] = useState(dayjs().format(DATE_FORMAT));
   const [users, setUsers] = useState(usersData);
   const [parkingLots, setParkingLots] = useState([]);
@@ -25,9 +28,32 @@ export const SchedulerProvider = ({ children }) => {
   const handleStringSearch = (value) => {
     setSearchTableTerm(value);
     if (value?.length > 2 && strings?.length > 0) {
+      let newFilterdStrings;
       let filterdStrings = filterTables(value, strings);
-      setFilteredTables(filterdStrings);
+      newFilterdStrings = _.cloneDeep(filterdStrings);
+      if (newFilterdStrings?.length > 0) {
+        let moreFiltered = newFilterdStrings[0].stateInfo?.filter((state) =>
+          state.name.toLowerCase().includes(value)
+        );
+        newFilterdStrings[0].stateInfo = moreFiltered;
+        setFilteredTables(newFilterdStrings);
+      } else {
+        setFilteredTables(filterdStrings);
+      }
     }
+  };
+
+  const handleCloseTable = (stringId, stateId) => {
+    const filteredString = strings.filter((string) => string.id === stringId);
+
+    const updatedTables = filteredString[0].stateInfo.filter(
+      (state) => state.id !== stateId
+    );
+
+    filteredString[0].stateInfo = updatedTables;
+    setStrings((prev) => {
+      return [...prev, filteredString];
+    });
   };
   return (
     <SchedulerContext.Provider
@@ -58,6 +84,7 @@ export const SchedulerProvider = ({ children }) => {
         searchTableTerm,
         filteredTables,
         setFilteredTables,
+        handleCloseTable,
       }}
     >
       {children}

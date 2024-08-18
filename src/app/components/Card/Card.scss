@@ -11,8 +11,7 @@ $position_background-color: #ec7551;
 	border-radius: 10px 10px 0px 0px;
 }
 .card-header {
-	padding: 5px;
-	padding: 8px;
+	padding: 0px 0px 0px 5px;
 	// background-color: $background-color_2;
 	cursor: pointer;
 	font-weight: bold;
@@ -27,15 +26,19 @@ $position_background-color: #ec7551;
 }
 .string {
 	background-color: $string_background-color;
+	height: 30px;
 }
 .pit {
 	background-color: $pit_background-color;
+	height: 30px;
 }
 .floor {
 	background-color: $floor_background-color;
+	height: 30px;
 }
 .posion {
 	background-color: $position_background-color;
+	height: 30px;
 }
 .card-content {
 	padding: 10px;
