@@ -83,29 +83,68 @@ function SchedulersList({
   //Cars swiping and adding users to card
   const handleCardOnDrop = (event, index, stringId) => {
     console.log("handleCardOnDrop--called-----", stringId);
-
     event.preventDefault();
 
     if (isStringTablesCanSwipe) {
-      // for existing Cars swiping with in string
-      const filteredString = strings.filter(
-        (card) =>
-          card.id === draggingCard.stringId &&
-          card?.stateInfo?.id !== draggingCard.id
-      );
+      const isSameString = stringId !== draggingCard.stringId;
+      if (isSameString) {
+        // start----remove table from parent string start
+        const dragedTableFromString = strings.filter(
+          (string) =>
+            string.id === draggingCard.stringId &&
+            string?.stateInfo?.id !== draggingCard.id
+        );
 
+        const filteredTables = dragedTableFromString[0]?.stateInfo?.filter(
+          (state) => state?.id !== draggingCard.id
+        );
 
-      console.log("draggingFloorTable---------------", filteredString);
-      console.log("draggingCard---------------", draggingCard);
-      const newCards = filteredString[0]?.stateInfo?.filter(
-        (state) => state?.id !== draggingCard.id
-      );
+        dragedTableFromString[0].stateInfo = filteredTables;
+        setStrings((prev) => {
+          return [...prev, filteredString];
+        });
+        // end---- remove table from parent string start
 
-      newCards.splice(index, 0, draggingCard);
-      filteredString[0].stateInfo = newCards;
-      setStrings((prev) => {
-        return [...prev, filteredString];
-      });
+        console.log(
+          "dragedTableFromString---------------",
+          dragedTableFromString
+        );
+
+        const filteredString = strings.filter(
+          (string) => string.id === stringId
+        );
+
+        draggingCard.stringId = stringId;
+        let tables = filteredString[0].stateInfo;
+        tables.push(draggingCard);
+        setStrings((prev) => {
+          return [...prev, filteredString];
+        });
+
+      } else {
+        // start ----------- for existing Cars swiping with in string
+        const filteredString = strings.filter(
+          (string) =>
+            string.id === draggingCard.stringId
+           &&
+            string?.stateInfo?.id !== draggingCard.id
+        );
+
+        
+        console.log("draggingFloorTable---------------", filteredString);
+        console.log("draggingCard---------------", draggingCard);
+        const newCards = filteredString[0]?.stateInfo?.filter(
+          (state) => state?.id !== draggingCard.id
+        );
+        console.log("newCards---------------", newCards);
+
+        newCards.splice(index, 0, draggingCard);
+        filteredString[0].stateInfo = newCards;
+        setStrings((prev) => {
+          return [...prev, filteredString];
+        });
+        // End ----------- for existing Cars swiping with in string
+      }
     } else {
       setIsStringTablesCanSwipe(true);
       const filteredString = strings.filter((string) => string.id === stringId);
