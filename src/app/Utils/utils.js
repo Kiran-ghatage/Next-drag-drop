@@ -33,3 +33,25 @@ export const searchEmployees = (searchTerm, employees) => {
     return filteredEmployees;
   }
 };
+
+export const filterTables = (query, data) => {
+  const lowerCaseQuery = query.toLowerCase();
+  const result = data.filter((item) => {
+    // Check if any stateInfo matches the query
+    const stateInfoMatches = item.stateInfo.some((state) => {
+      const userInfo = state.userInfo;
+      if (userInfo) {
+        return (
+          userInfo.name.toLowerCase().includes(lowerCaseQuery) ||
+          userInfo.employeeNumber.toString().includes(lowerCaseQuery) ||
+          state.name.toLowerCase().includes(lowerCaseQuery)
+        );
+      } else {
+        return state.name.toLowerCase().includes(lowerCaseQuery);
+      }
+    });
+
+    return stateInfoMatches;
+  });
+  return result;
+};

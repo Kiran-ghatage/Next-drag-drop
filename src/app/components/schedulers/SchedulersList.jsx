@@ -15,7 +15,8 @@ function SchedulersList({
   handleTableDropDownElementOnDrop,
   handleTableDropDownElementOnDragOver,
 }) {
-  const { strings, setStrings, dateTime } = useContext(SchedulerContext);
+  const { strings, setStrings, dateTime, searchTableTerm, filteredTables } =
+    useContext(SchedulerContext);
   const {
     isStringTablesCanSwipe,
     setIsStringTablesCanSwipe,
@@ -25,8 +26,8 @@ function SchedulersList({
 
   const [draggingCard, setDraggingCard] = useState(null);
   const [loading, setLoading] = useState(false);
-  // let defaultDate = "2024-05-25"
-  let defaultDate = dateTime;
+  let defaultDate = "2024-06-16";
+  // let defaultDate = dateTime;
   const getStrings = async () => {
     try {
       setLoading(true);
@@ -34,6 +35,7 @@ function SchedulersList({
         `${BASE_PATH}/api/StringData?selectedDateTime=${defaultDate}`
       );
       setStrings(strings?.data);
+      // setFilterTables(strings?.data);
       setLoading(false);
     } catch (error) {
       console.log("something went wrong while fetching Strings", error);
@@ -41,8 +43,8 @@ function SchedulersList({
   };
 
   useEffect(() => {
-    getStrings();
-  }, [dateTime]);
+    if (!searchTableTerm.length > 0) getStrings();
+  }, [dateTime, searchTableTerm]);
 
   // const getHeaderClass = (type) => {
   //   switch (type) {
@@ -55,7 +57,7 @@ function SchedulersList({
   //   }
   // };
 
-  const getHeaderClass = (type) => {    
+  const getHeaderClass = (type) => {
     switch (type) {
       case 1:
         return "string";
@@ -80,7 +82,7 @@ function SchedulersList({
 
   //Cars swiping and adding users to card
   const handleCardOnDrop = (event, index, stringId) => {
-    console.log("handleCardOnDrop--called-----");
+    console.log("handleCardOnDrop--called-----", stringId);
 
     event.preventDefault();
 
@@ -91,6 +93,10 @@ function SchedulersList({
           card.id === draggingCard.stringId &&
           card?.stateInfo?.id !== draggingCard.id
       );
+
+
+      console.log("draggingFloorTable---------------", filteredString);
+      console.log("draggingCard---------------", draggingCard);
       const newCards = filteredString[0]?.stateInfo?.filter(
         (state) => state?.id !== draggingCard.id
       );
@@ -128,44 +134,77 @@ function SchedulersList({
     }
     // setDraggingCard(null);
   };
+
   return (
     <div
       className="scheduler_container"
       onDrop={handleTableDropDownElementOnDrop}
       onDragOver={handleTableDropDownElementOnDragOver}
     >
-      {strings?.length > 0 &&
-        strings.map((string, stringIndex) => (
-          <div key={stringIndex}>
-            {/* <Typography>{string?.name?.toUpperCase()}</Typography> */}
-            <div key={string.id} className="scheduler_cards">
-              {string?.stateInfo?.length > 0 &&
-                string.stateInfo.map((state, stateIndex) => (
+      {filteredTables?.length > 0
+        ? filteredTables.map((string, stringIndex) => (
+            <div key={stringIndex}>
+              {/* <Typography>{string?.name?.toUpperCase()}</Typography> */}
+              <div key={string.id} className="scheduler_cards">
+                {string?.stateInfo?.length > 0 &&
+                  string.stateInfo.map((state, stateIndex) => (
+                    <div
+                      className="scheduler_cards_width"
+                      key={stateIndex}
+                      onDrop={(event) =>
+                        handleCardOnDrop(event, stateIndex, string.id)
+                      }
+                    >
+                      <Card
+                        card={state}
+                        onCardDragStart={onCardDragStart}
+                        draggable={isStringTablesCanSwipe}
+                        onCardElementDragStart={() => {}}
+                        headerClass={getHeaderClass(string.id)}
+                      />
+                    </div>
+                  ))}
+                {string?.stateInfo?.length < 4 && (
                   <div
-                    className="scheduler_cards_width"
-                    key={stateIndex}
-                    onDrop={(event) =>
-                      handleCardOnDrop(event, stateIndex, string.id)
-                    }
-                  >
-                    <Card
-                      card={state}
-                      onCardDragStart={onCardDragStart}
-                      draggable={isStringTablesCanSwipe}
-                      onCardElementDragStart={() => {}}
-                      headerClass={getHeaderClass(string.id)}
-                    />
-                  </div>
-                ))}
-              {/* {string?.stateInfo?.length < 4 && (
-                <div
-                  style={{ height: "140px", width: "20%" }}
-                  onDrop={(event) => handleCardOnDrop(event, null, string.id)}
-                ></div>
-              )} */}
+                    style={{ height: "90px", width: "15%" }}
+                    onDrop={(event) => handleCardOnDrop(event, null, string.id)}
+                  ></div>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        : strings?.length > 0 &&
+          strings.map((string, stringIndex) => (
+            <div key={stringIndex}>
+              {/* <Typography>{string?.name?.toUpperCase()}</Typography> */}
+              <div key={string.id} className="scheduler_cards">
+                {string?.stateInfo?.length > 0 &&
+                  string.stateInfo.map((state, stateIndex) => (
+                    <div
+                      className="scheduler_cards_width"
+                      key={stateIndex}
+                      onDrop={(event) =>
+                        handleCardOnDrop(event, stateIndex, string.id)
+                      }
+                    >
+                      <Card
+                        card={state}
+                        onCardDragStart={onCardDragStart}
+                        draggable={isStringTablesCanSwipe}
+                        onCardElementDragStart={() => {}}
+                        headerClass={getHeaderClass(string.id)}
+                      />
+                    </div>
+                  ))}
+                {string?.stateInfo?.length < 4 && (
+                  <div
+                    style={{ height: "90px", width: "15%" }}
+                    onDrop={(event) => handleCardOnDrop(event, null, string.id)}
+                  ></div>
+                )}
+              </div>
+            </div>
+          ))}
     </div>
   );
 }

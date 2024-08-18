@@ -3,6 +3,7 @@ import React, { createContext, useState } from "react";
 import dayjs from "dayjs";
 import { stringData, usersData, tablesData } from "../../MockData/Data";
 import { DATE_TIME_FORMAT, DATE_FORMAT } from "../../Constants/Constants";
+import { filterTables } from "../../Utils/utils";
 
 export const SchedulerContext = createContext();
 
@@ -18,6 +19,16 @@ export const SchedulerProvider = ({ children }) => {
   const [dealers, setDealers] = useState([]);
   const [floorManagers, setFloorManagers] = useState([]);
   const [pitManagers, setPitManagers] = useState([]);
+  const [searchTableTerm, setSearchTableTerm] = useState("");
+  const [filteredTables, setFilteredTables] = useState("");
+
+  const handleStringSearch = (value) => {
+    setSearchTableTerm(value);
+    if (value?.length > 2 && strings?.length > 0) {
+      let filterdStrings = filterTables(value, strings);
+      setFilteredTables(filterdStrings);
+    }
+  };
   return (
     <SchedulerContext.Provider
       value={{
@@ -43,6 +54,10 @@ export const SchedulerProvider = ({ children }) => {
         setFloorManagers,
         pitManagers,
         setPitManagers,
+        handleStringSearch,
+        searchTableTerm,
+        filteredTables,
+        setFilteredTables,
       }}
     >
       {children}

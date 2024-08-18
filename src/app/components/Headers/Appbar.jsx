@@ -1,5 +1,5 @@
 "use client";
-import * as React from "react";
+import React, { useContext } from "react";
 import { styled, alpha } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -11,6 +11,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import DateTime from "./DateTime";
 import DateTimePicker from "../DateTime/DateTimePicker";
+import { SchedulerContext } from "../../Context/SchedulerContext/SchedulerContext";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -55,6 +56,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function SearchAppBar() {
+  const { handleStringSearch } = useContext(SchedulerContext);
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" sx={{ background: "#5c5c5c" }}>
@@ -86,6 +88,9 @@ export default function SearchAppBar() {
             </SearchIconWrapper>
             <StyledInputBase
               placeholder="Search…"
+              onChange={(event) => {
+                handleStringSearch(event.target.value.toLowerCase());
+              }}
               inputProps={{ "aria-label": "search" }}
             />
           </Search>
