@@ -11,6 +11,7 @@ export const DrapDropProvider = ({ children }) => {
   const [draggingTable, setDraggingTable] = useState(null);
   const [isStringTablesCanSwipe, setIsStringTablesCanSwipe] = useState(true);
   const [draggingFloorTable, setDraggingFloorTable] = useState(null);
+  const [draggingDealer, setDraggingDealer] = useState(null);
 
   const handleFloorTableDraggedFromDropDoanListOnDragStart = (event, table) => {
     console.log(
@@ -51,6 +52,21 @@ export const DrapDropProvider = ({ children }) => {
     setTables(updatedStrings);
   };
 
+  const handleDealerDraggedFromDropDoanListOnDragStart = (event, employee) => {
+    console.log(
+      "employee-------##--handleDealerDraggedFromDropDoanListOnDragStart----",
+      employee
+    );
+
+    setIsStringTablesCanSwipe(false);
+    if (employee?.employeeNumber) {
+      setDraggingDealer(employee);
+      // event.dataTransfer.setData("table", table);
+    } else {
+      setDraggingDealer(null);
+    }
+  };
+
   return (
     <DragDropContext.Provider
       value={{
@@ -61,9 +77,12 @@ export const DrapDropProvider = ({ children }) => {
         handleRemoveTable,
 
         handleFloorTableDraggedFromDropDoanListOnDragStart,
-
         draggingFloorTable,
         setDraggingFloorTable,
+
+        handleDealerDraggedFromDropDoanListOnDragStart,
+        draggingDealer,
+        setDraggingDealer,
       }}
     >
       {children}

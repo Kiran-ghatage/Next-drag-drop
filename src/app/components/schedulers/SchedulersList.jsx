@@ -22,6 +22,7 @@ function SchedulersList({
     setIsStringTablesCanSwipe,
     draggingFloorTable,
     setDraggingFloorTable,
+    draggingDealer,
   } = useContext(DragDropContext);
 
   const [draggingCard, setDraggingCard] = useState(null);
@@ -81,8 +82,11 @@ function SchedulersList({
   };
 
   //Cars swiping and adding users to card
-  const handleCardOnDrop = (event, index, stringId) => {
+  const handleCardOnDrop = (event, index, stringId, stateId) => {
     console.log("handleCardOnDrop--called-----", stringId);
+    console.log("handleCardOnDrop--draggingDealer-----", draggingDealer);
+    console.log("stateId----", stateId);
+
     event.preventDefault();
 
     if (isStringTablesCanSwipe) {
@@ -143,29 +147,55 @@ function SchedulersList({
         // End ----------- for existing Cars swiping with in string
       }
     } else {
-      setIsStringTablesCanSwipe(true);
-      const filteredString = strings.filter((string) => string.id === stringId);
-      console.log("draggingFloorTable---------------", draggingFloorTable);
-      console.log("filteredString---------------", filteredString);
+      //add dealer to table
+      if (draggingDealer?.employeeNumber && stateId) {
+        const filteredString = strings.filter(
+          (string) => string.id === stringId
+        );
 
-      if (filteredString?.length > 0) {
-        const newTable = {
-          id: filteredString[0]?.stringLength + 1,
-          stringId: stringId,
-          sequenceId: filteredString[0]?.stringLength + 1,
-          name: draggingFloorTable.name,
-          stateType: 0,
-          startDate: "2024-06-25T14:07:51.327",
-          endDate: null,
-          userInfo: null,
-          lastRecordUpdated: "0001-01-01T00:00:00",
-        };
+        const filteredTables = filteredString[0]?.stateInfo?.map((state) => {
+          if(state?.id === stateId){
+            state.userInfo = draggingDealer
+            return state
+          }else{
+            return state
+          }
+        });
 
-        let tables = filteredString[0].stateInfo;
-        tables.push(newTable);
+        filteredString[0].stateInfo = filteredTables;
         setStrings((prev) => {
           return [...prev, filteredString];
         });
+        setIsStringTablesCanSwipe(true);
+
+      } else {
+        //add new table to string
+        setIsStringTablesCanSwipe(true);
+        const filteredString = strings.filter(
+          (string) => string.id === stringId
+        );
+        console.log("draggingFloorTable---------------", draggingFloorTable);
+        console.log("filteredString---------------", filteredString);
+
+        if (filteredString?.length > 0) {
+          const newTable = {
+            id: filteredString[0]?.stringLength + 1,
+            stringId: stringId,
+            sequenceId: filteredString[0]?.stringLength + 1,
+            name: draggingFloorTable.name,
+            stateType: 0,
+            startDate: "2024-06-25T14:07:51.327",
+            endDate: null,
+            userInfo: null,
+            lastRecordUpdated: "0001-01-01T00:00:00",
+          };
+
+          let tables = filteredString[0].stateInfo;
+          tables.push(newTable);
+          setStrings((prev) => {
+            return [...prev, filteredString];
+          });
+        }
       }
     }
     // setDraggingCard(null);
@@ -194,7 +224,12 @@ function SchedulersList({
                           className="scheduler_cards_width"
                           key={stateIndex}
                           onDrop={(event) =>
-                            handleCardOnDrop(event, stateIndex, string.id)
+                            handleCardOnDrop(
+                              event,
+                              stateIndex,
+                              string?.id,
+                              state?.id
+                            )
                           }
                         >
                           <Card
@@ -228,7 +263,12 @@ function SchedulersList({
                           className="scheduler_cards_width"
                           key={stateIndex}
                           onDrop={(event) =>
-                            handleCardOnDrop(event, stateIndex, string.id)
+                            handleCardOnDrop(
+                              event,
+                              stateIndex,
+                              string.id,
+                              state?.id
+                            )
                           }
                         >
                           <Card

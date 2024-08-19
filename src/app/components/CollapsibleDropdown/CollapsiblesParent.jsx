@@ -42,6 +42,8 @@ function CollapsiblesParent() {
   const {
     setDraggingTable,
     handleFloorTableDraggedFromDropDoanListOnDragStart,
+    handleDealerDraggedFromDropDoanListOnDragStart,
+    draggingDealer
   } = useContext(DragDropContext);
 
   const [loading, setLoading] = useState(false);
@@ -120,8 +122,8 @@ function CollapsiblesParent() {
     }
   };
 
-  // let defaultDate = "2024-05-25"
-  let defaultDate = dateTime
+  let defaultDate = "2024-06-16"
+  // let defaultDate = dateTime
 
   const getDealers = async () => {
     try {
@@ -225,7 +227,7 @@ function CollapsiblesParent() {
         <Loader />
       ) : parkingLots?.length > 0 ? (
         parkingLots.map((table, tableIndex) => (
-          <Paper elevation={24} key={`${table.name - tableIndex}`}>
+          <Paper elevation={24} key={`${table?.id - tableIndex}`}>
             <ListItem
               component="div"
               disablePadding
@@ -250,7 +252,7 @@ function CollapsiblesParent() {
         <Loader />
       ) : floors?.length > 0 ? (
         floors.map((table, tableIndex) => (
-          <Paper elevation={24} key={`${table.name - tableIndex}`}>
+          <Paper elevation={24} key={`${table?.id - tableIndex}`}>
             <ListItem
               component="div"
               disablePadding
@@ -275,7 +277,7 @@ function CollapsiblesParent() {
         <Loader />
       ) : pits?.length > 0 ? (
         pits.map((table, tableIndex) => (
-          <Paper elevation={24} key={`${table.name - tableIndex}`}>
+          <Paper elevation={24} key={`${table?.id - tableIndex}`}>
             <ListItem
               component="div"
               disablePadding
@@ -301,7 +303,7 @@ function CollapsiblesParent() {
       ) : (
         positions?.length > 0 &&
         positions.map((table, tableIndex) => (
-          <Paper elevation={24} key={`${table.name - tableIndex}`}>
+          <Paper elevation={24} key={`${table?.id - tableIndex}`}>
             <ListItem
               component="div"
               disablePadding
@@ -325,7 +327,7 @@ function CollapsiblesParent() {
       ) : (
         tables?.length > 0 &&
         tables.map((table, tableIndex) => (
-          <Paper elevation={24} key={`${table.name - tableIndex}`}>
+          <Paper elevation={24} key={`${table?.id - tableIndex}`}>
             <ListItem
               component="div"
               disablePadding
@@ -354,7 +356,7 @@ function CollapsiblesParent() {
               disablePadding
               draggable
               onDragStart={(event) =>
-                hanldeTableDropDownElementOnDragStart(event, table)
+                handleDealerDraggedFromDropDoanListOnDragStart(event, table)
               }
             >
               {employeesContentView(table)}
@@ -369,7 +371,7 @@ function CollapsiblesParent() {
               disablePadding
               draggable
               onDragStart={(event) =>
-                hanldeTableDropDownElementOnDragStart(event, table)
+                handleDealerDraggedFromDropDoanListOnDragStart(event, table)
               }
             >
               {employeesContentView(table)}
