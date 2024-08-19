@@ -4,7 +4,9 @@ import Paper from "@mui/material/Paper";
 import Avatar from "@mui/material/Avatar";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import { DragDropContext } from "../../Context/DragDropContext/DragDropContext";
-import Menu from '../Common/Menu'
+import { SchedulerContext } from "../../Context/SchedulerContext/SchedulerContext";
+
+import Menu from "../Common/Menu";
 import "./Card.scss";
 const Card = ({
   card,
@@ -14,6 +16,7 @@ const Card = ({
   headerClass,
 }) => {
   const { handleRemoveTable } = useContext(DragDropContext);
+  const { searchTableTerm } = useContext(SchedulerContext);
 
   return (
     <div
@@ -21,10 +24,17 @@ const Card = ({
       draggable={card?.sequenceId !== 0 ? draggable : false}
       onDragStart={(event) => onCardDragStart(event, card)}
     >
-      <Paper elevation={3} className="scheduler-container">
+      <Paper
+        elevation={searchTableTerm && card?.name.toLowerCase().includes(searchTableTerm) ? 22:1}
+        className={
+          searchTableTerm && card?.name.toLowerCase().includes(searchTableTerm)
+            ? "scheduler-container_searched"
+            : "scheduler-container"
+        }
+      >
         <header className={`card-header ${headerClass}`}>
           {card?.name}{" "}
-          {draggable && card?.sequenceId !== 0 && <Menu card={card}/>}
+          {draggable && card?.sequenceId !== 0 && <Menu card={card} />}
         </header>
         <article className="card-content">
           {card?.userInfo && (
@@ -37,7 +47,9 @@ const Card = ({
               </Avatar>
               <p className="user-text">
                 {" "}
-                {`${card?.userInfo.name || card?.userInfo?.firstName} (${card?.userInfo.employeeNumber})`}{" "}
+                {`${card?.userInfo.name || card?.userInfo?.firstName} (${
+                  card?.userInfo.employeeNumber
+                })`}{" "}
               </p>
             </div>
           )}

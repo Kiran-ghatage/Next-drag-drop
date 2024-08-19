@@ -154,11 +154,11 @@ function SchedulersList({
         );
 
         const filteredTables = filteredString[0]?.stateInfo?.map((state) => {
-          if(state?.id === stateId){
-            state.userInfo = draggingDealer
-            return state
-          }else{
-            return state
+          if (state?.id === stateId) {
+            state.userInfo = draggingDealer;
+            return state;
+          } else {
+            return state;
           }
         });
 
@@ -167,7 +167,6 @@ function SchedulersList({
           return [...prev, filteredString];
         });
         setIsStringTablesCanSwipe(true);
-
       } else {
         //add new table to string
         setIsStringTablesCanSwipe(true);
@@ -221,7 +220,7 @@ function SchedulersList({
                     {string?.stateInfo?.length > 0 &&
                       string.stateInfo.map((state, stateIndex) => (
                         <div
-                          className="scheduler_cards_width"
+                          className={ "scheduler_cards_width"}
                           key={stateIndex}
                           onDrop={(event) =>
                             handleCardOnDrop(

@@ -31,15 +31,17 @@ export const SchedulerProvider = ({ children }) => {
       let newFilterdStrings;
       let filterdStrings = filterTables(value, strings);
       newFilterdStrings = _.cloneDeep(filterdStrings);
-      if (newFilterdStrings?.length > 0) {
-        let moreFiltered = newFilterdStrings[0].stateInfo?.filter((state) =>
-          state.name.toLowerCase().includes(value)
-        );
-        newFilterdStrings[0].stateInfo = moreFiltered;
-        setFilteredTables(newFilterdStrings);
-      } else {
-        setFilteredTables(filterdStrings);
-      }
+      setFilteredTables(filterdStrings);
+
+      // if (newFilterdStrings?.length > 0) {
+      //   let moreFiltered = newFilterdStrings[0].stateInfo?.filter((state) =>
+      //     state.name.toLowerCase().includes(value)
+      //   );
+      //   newFilterdStrings[0].stateInfo = moreFiltered;
+      //   setFilteredTables(newFilterdStrings);
+      // } else {
+      //   setFilteredTables(filterdStrings);
+      // }
     }
   };
 
