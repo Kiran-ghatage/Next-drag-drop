@@ -1,13 +1,14 @@
 "use client";
 import { useContext, useEffect, useState } from "react";
-import Typography from "@mui/material/Typography";
+import AddIcon from "@mui/icons-material/Add";
+import Avatar from "@mui/material/Avatar";
 import { DragDropContext } from "../../Context/DragDropContext/DragDropContext";
 import { SchedulerContext } from "../../Context/SchedulerContext/SchedulerContext";
 import { SCHEDULER_TYPES } from "../../Constants/SchedulerTypes";
 import { BASE_PATH } from "../../Constants/Constants";
 import Card from "../Card/Card1";
 import Loader from "../Common/Loader";
-
+import StringCreateDialog from "../Dialog/StringCreateDialog";
 import "./SchedulersList.scss";
 import axios from "axios";
 
@@ -27,6 +28,8 @@ function SchedulersList({
 
   const [draggingCard, setDraggingCard] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+
   let defaultDate = "2024-06-16";
   // let defaultDate = dateTime;
   const getStrings = async () => {
@@ -200,6 +203,14 @@ function SchedulersList({
     // setDraggingCard(null);
   };
 
+  const handleOpenDialog = () => setDialogOpen(true);
+  const handleCloseDialog = () => setDialogOpen(false);
+
+  const createNewString = (event) => {
+    event.preventDefault();
+    handleOpenDialog(true);
+  };
+
   return (
     <>
       {loading ? (
@@ -212,6 +223,25 @@ function SchedulersList({
           onDrop={handleTableDropDownElementOnDrop}
           onDragOver={handleTableDropDownElementOnDragOver}
         >
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "50px",
+              background: "#ccc",
+              margin: "10px 75px 30px 75px",
+              borderRadius: "10px",
+            }}
+            onDrop={(event) => createNewString(event)}
+          >
+            <Avatar
+              sx={{ fontSize: "small", width: 30, height: 30 }}
+              alt="add icon"
+            >
+              <AddIcon />
+            </Avatar>
+          </div>
           {filteredTables?.length > 0
             ? filteredTables.map((string, stringIndex) => (
                 <div key={stringIndex}>
@@ -220,7 +250,7 @@ function SchedulersList({
                     {string?.stateInfo?.length > 0 &&
                       string.stateInfo.map((state, stateIndex) => (
                         <div
-                          className={ "scheduler_cards_width"}
+                          className={"scheduler_cards_width"}
                           key={stateIndex}
                           onDrop={(event) =>
                             handleCardOnDrop(
@@ -240,10 +270,10 @@ function SchedulersList({
                           />
                         </div>
                       ))}
-                    {string?.stateInfo?.length < 4 && (
+                    {string?.stateInfo?.length < 5 && (
                       <div
-                        style={{ height: "90px", width: "15%" }}
-                        onDrop={(event) =>
+                      style={{ height: "90px", width: "20%", border: "1px dotted", borderRadius: "15px" }}
+                      onDrop={(event) =>
                           handleCardOnDrop(event, null, string.id)
                         }
                       ></div>
@@ -279,9 +309,9 @@ function SchedulersList({
                           />
                         </div>
                       ))}
-                    {string?.stateInfo?.length < 4 && (
+                    {string?.stateInfo?.length < 5 && (
                       <div
-                        style={{ height: "90px", width: "15%" }}
+                        style={{ height: "90px", width: "20%", border: "1px dotted", borderRadius: "15px" }}
                         onDrop={(event) =>
                           handleCardOnDrop(event, null, string.id)
                         }
@@ -290,6 +320,7 @@ function SchedulersList({
                   </div>
                 </div>
               ))}
+          <StringCreateDialog open={dialogOpen} onClose={handleCloseDialog} />
         </div>
       )}
     </>

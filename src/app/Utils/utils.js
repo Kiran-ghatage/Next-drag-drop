@@ -55,3 +55,87 @@ export const filterTables = (query, data) => {
   });
   return result;
 };
+
+export const createStringObject = (data, table) => {
+  console.log("table--------------", data, table);
+
+  if (data) {
+    let string = {
+      id: 0,
+      name: data?.stringName || "",
+      sequence: 0,
+      lastRotationDateTime: data?.startDate,
+      rotationTime: data.rotationTime,
+      rotTypeId: 1,
+      stringLength: 2,
+      startDate: data?.startDate,
+      endDate: null,
+      lastRecordUpdated: null,
+      stateInfo: [
+        {
+          id: 0,
+          stringId: 0,
+          sequence: 0,
+          name: "Break",
+          stateTypeId: 10,
+          startDate: data?.startDate,
+          endDate: "null",
+          userInfo: null,
+          lastRecordUpdated: "null",
+        },
+        {
+          id: 0,
+          stringId: 0,
+          sequence: 1,
+          name: table.name,
+          stateTypeId: 22,
+          startDate: data?.startDate,
+          endDate: "null",
+          userInfo: null,
+          lastRecordUpdated: "null",
+        },
+      ],
+    };
+    return string;
+  } else {
+    return null;
+  }
+
+  // {
+  //   "id": 0,
+  //   "name": "string",
+  //   "sequence": 0,
+  //   "lastRotationDateTime": "same as slected date",
+  //   "rotationTime": 30,
+  //   "nextRotationDateTime": null,
+  //   "rotTypeId": 1,
+  //   "stringLength": "2 is default",
+  //   "startDate": "2024-08-20T07:37:41.980Z",
+  //   "endDate": "null",
+  //   "lastRecordUpdated": "null",
+  //   "stateInfo": [
+  //     {
+  //       "id": 0,
+  //       "stringId": 0,
+  //       "sequence": 0,
+  //       "name": "Break",
+  //       "stateTypeId": 10,
+  //       "startDate": "startDate",
+  //       "endDate": "null",
+  //       "userInfo": null,
+  //       "lastRecordUpdated": "null"
+  //     },
+  //     {
+  //         "id": 0,
+  //         "stringId": 0,
+  //         "sequence": 1,
+  //         "name": "Dragged table name",
+  //         "stateTypeId": 10,
+  //         "startDate": "startDate",
+  //         "endDate": "null",
+  //         "userInfo": null,
+  //         "lastRecordUpdated": "null"
+  //       }
+  //   ]
+  // }
+};
